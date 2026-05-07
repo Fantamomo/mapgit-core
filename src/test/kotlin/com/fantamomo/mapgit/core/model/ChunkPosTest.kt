@@ -1,6 +1,5 @@
-package com.fantamomo.mapgit.core
+package com.fantamomo.mapgit.core.model
 
-import com.fantamomo.mapgit.core.model.ChunkPos
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

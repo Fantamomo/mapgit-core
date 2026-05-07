@@ -1,6 +1,5 @@
-package com.fantamomo.mapgit.core
+package com.fantamomo.mapgit.core.model
 
-import com.fantamomo.mapgit.core.model.Author
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals

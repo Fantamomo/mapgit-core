@@ -1,7 +1,5 @@
-package com.fantamomo.mapgit.core
+package com.fantamomo.mapgit.core.model
 
-import com.fantamomo.mapgit.core.model.ChunkPos
-import com.fantamomo.mapgit.core.model.ChunkTree
 import com.fantamomo.mapgit.core.util.Hash
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

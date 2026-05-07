@@ -1,4 +1,4 @@
-package com.fantamomo.mapgit.core
+package com.fantamomo.mapgit.core.model
 
 import com.fantamomo.mapgit.core.storage.FriendlyByteBuf
 import io.netty.buffer.Unpooled

@@ -1,6 +1,5 @@
-package com.fantamomo.mapgit.core
+package com.fantamomo.mapgit.core.model
 
-import com.fantamomo.mapgit.core.model.BlockPos
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

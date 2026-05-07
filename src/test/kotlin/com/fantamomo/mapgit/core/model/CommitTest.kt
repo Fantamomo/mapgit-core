@@ -1,7 +1,5 @@
-package com.fantamomo.mapgit.core
+package com.fantamomo.mapgit.core.model
 
-import com.fantamomo.mapgit.core.model.Author
-import com.fantamomo.mapgit.core.model.Commit
 import com.fantamomo.mapgit.core.util.Hash
 import org.junit.jupiter.api.Test
 import java.util.*
