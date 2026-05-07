@@ -8,7 +8,7 @@ class BlockPosTest {
 
     @Test
     fun `blockpos roundtrip`() {
-        val pos = BlockPos(1, 200, 15)
+        val pos = BlockPos(1, 13, 15)
 
         val result = roundTrip(
             pos,

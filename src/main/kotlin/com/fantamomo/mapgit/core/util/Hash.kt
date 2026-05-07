@@ -1,10 +1,13 @@
 package com.fantamomo.mapgit.core.util
 
-import com.fantamomo.mapgit.core.storage.FriendlyByteBuf
-import io.netty.buffer.ByteBuf
+import kotlinx.io.Buffer
+import kotlinx.io.Sink
+import kotlinx.io.Source
+import kotlinx.io.readTo
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import kotlin.math.min
 
 @ConsistentCopyVisibility
 data class Hash private constructor(
@@ -17,8 +20,8 @@ data class Hash private constructor(
     fun toHexString(format: HexFormat = HexFormat.Default): String =
         value.toHexString(format)
 
-    fun writeTo(buf: FriendlyByteBuf) {
-        buf.writeBytes(value)
+    fun writeTo(buf: Sink) {
+        buf.write(value)
     }
 
     companion object {
@@ -42,25 +45,21 @@ data class Hash private constructor(
             return Hash(bytes.copyOf())
         }
 
-        fun readFromByteBuf(buf: FriendlyByteBuf): Hash {
+        fun readFromBuffer(source: Source): Hash {
             val bytes = ByteArray(32)
-            buf.readBytes(bytes)
+            source.readTo(bytes)
             return Hash(bytes)
         }
 
-        fun hash(buf: ByteBuf): Hash {
+        fun hash(buf: Buffer): Hash {
             val digest = digest()
+            val buffer = ByteArray(8192)
 
-            if (buf.hasArray()) {
-                val array = buf.array()
-                val offset = buf.arrayOffset() + buf.readerIndex()
-                digest.update(array, offset, buf.readableBytes())
-            } else {
-                val temp = ByteArray(buf.readableBytes())
-                buf.getBytes(buf.readerIndex(), temp)
-                digest.update(temp)
+            while (buf.size > 0) {
+                val toRead = min(buffer.size.toLong(), buf.size).toInt()
+                buf.readTo(buffer, 0, toRead)
+                digest.update(buffer, 0, toRead)
             }
-
             return Hash(digest.digest())
         }
 
@@ -84,7 +83,7 @@ data class Hash private constructor(
             return Hash(digest.digest())
         }
 
-        fun hash(vararg values: Any?): Hash {
+        fun hashVarargs(vararg values: Any?): Hash {
             val digest = digest()
 
             values.forEach {

@@ -1,9 +1,12 @@
 package com.fantamomo.mapgit.core.model
 
-import com.fantamomo.mapgit.core.storage.FriendlyByteBuf
 import com.fantamomo.mapgit.core.storage.StorableObject
 import com.fantamomo.mapgit.core.storage.StorableReadWriter
+import com.fantamomo.mapgit.core.storage.readHash
+import com.fantamomo.mapgit.core.storage.writeHash
 import com.fantamomo.mapgit.core.util.Hash
+import kotlinx.io.Sink
+import kotlinx.io.Source
 
 data class Chunk(
     val blocks: List<Hash>
@@ -19,43 +22,43 @@ data class Chunk(
         const val OPTIMISATION_THRESHOLD = 2048 // Subject to change. Changing this variable will not affect readability.
         override val type: String = "chunk"
 
-        override fun read(buf: FriendlyByteBuf): Chunk {
-            val blocks = when (val type = buf.readByte().toInt()) {
+        override fun read(source: Source): Chunk {
+            val blocks = when (val type = source.readByte().toInt()) {
                 1 -> {
-                    val hash = buf.readHash()
+                    val hash = source.readHash()
                     List(BLOCKS_PER_CHUNK) { hash }
                 }
 
                 2 -> {
-                    val size = buf.readByte().toInt() and 0xFF
+                    val size = source.readByte().toInt() and 0xFF
                     val unique = ArrayList<Hash>(size)
 
                     repeat(size) {
-                        unique.add(buf.readHash())
+                        unique.add(source.readHash())
                     }
 
                     List(BLOCKS_PER_CHUNK) {
-                        val index = buf.readByte().toInt() and 0xFF
+                        val index = source.readByte().toInt() and 0xFF
                         unique[index]
                     }
                 }
 
                 3 -> {
-                    val size = buf.readInt()
+                    val size = source.readInt()
                     val unique = ArrayList<Hash>(size)
 
                     repeat(size) {
-                        unique.add(buf.readHash())
+                        unique.add(source.readHash())
                     }
 
                     List(BLOCKS_PER_CHUNK) {
-                        val index = buf.readShort().toInt() and 0xFFFF
+                        val index = source.readShort().toInt() and 0xFFFF
                         unique[index]
                     }
                 }
 
                 4 -> {
-                    List(BLOCKS_PER_CHUNK) { buf.readHash() }
+                    List(BLOCKS_PER_CHUNK) { source.readHash() }
                 }
 
                 else -> throw IllegalStateException("Unknown chunk encoding type: $type")
@@ -65,7 +68,7 @@ data class Chunk(
         }
 
         override fun write(
-            buf: FriendlyByteBuf,
+            sink: Sink,
             obj: Chunk
         ) {
             val blocks = obj.blocks
@@ -84,35 +87,35 @@ data class Chunk(
 
             when {
                 uniqueSize == 1 -> {
-                    buf.writeByte(1)
-                    buf.writeHash(uniqueList[0])
+                    sink.writeByte(1)
+                    sink.writeHash(uniqueList[0])
                 }
 
                 uniqueSize <= 256 -> {
-                    buf.writeByte(2)
-                    buf.writeByte(uniqueSize)
+                    sink.writeByte(2)
+                    sink.writeByte(uniqueSize.toByte())
 
-                    uniqueList.forEach { buf.writeHash(it) }
+                    uniqueList.forEach { sink.writeHash(it) }
 
                     for (block in blocks) {
-                        buf.writeByte(indexMap[block]!!)
+                        sink.writeByte(indexMap[block]!!.toByte())
                     }
                 }
 
                 uniqueSize <= OPTIMISATION_THRESHOLD -> {
-                    buf.writeByte(3)
-                    buf.writeInt(uniqueSize)
+                    sink.writeByte(3)
+                    sink.writeInt(uniqueSize)
 
-                    uniqueList.forEach { buf.writeHash(it) }
+                    uniqueList.forEach { sink.writeHash(it) }
 
                     for (block in blocks) {
-                        buf.writeShort(indexMap[block]!!)
+                        sink.writeShort(indexMap[block]!!.toShort())
                     }
                 }
 
                 else -> {
-                    buf.writeByte(4)
-                    blocks.forEach { buf.writeHash(it) }
+                    sink.writeByte(4)
+                    blocks.forEach { sink.writeHash(it) }
                 }
             }
         }

@@ -1,11 +1,12 @@
 package com.fantamomo.mapgit.core.protocol.body
 
-import com.fantamomo.mapgit.core.storage.FriendlyByteBuf
+import kotlinx.io.Sink
+import kotlinx.io.Source
 
 interface BodyDefinition<B : Body> {
     val contentType: String
 
-    fun serialize(buf: FriendlyByteBuf, body: B)
+    fun serialize(sink: Sink, body: B)
 
-    fun deserialize(buf: FriendlyByteBuf): B
+    fun deserialize(source: Source): B
 }

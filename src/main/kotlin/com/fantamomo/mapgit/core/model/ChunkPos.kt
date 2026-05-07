@@ -1,8 +1,9 @@
 package com.fantamomo.mapgit.core.model
 
-import com.fantamomo.mapgit.core.storage.FriendlyByteBuf
 import com.fantamomo.mapgit.core.storage.StorableObject
 import com.fantamomo.mapgit.core.storage.StorableReadWriter
+import kotlinx.io.Sink
+import kotlinx.io.Source
 
 data class ChunkPos(
     val x: Int,
@@ -16,19 +17,19 @@ data class ChunkPos(
 
         override val type: String = "chunk_pos"
 
-        override fun read(buf: FriendlyByteBuf) = ChunkPos(
-            buf.readInt(),
-            buf.readInt(),
-            buf.readInt()
+        override fun read(source: Source) = ChunkPos(
+            source.readInt(),
+            source.readInt(),
+            source.readInt()
         )
 
         override fun write(
-            buf: FriendlyByteBuf,
+            sink: Sink,
             obj: ChunkPos
         ) {
-            buf.writeInt(obj.x)
-            buf.writeInt(obj.y)
-            buf.writeInt(obj.z)
+            sink.writeInt(obj.x)
+            sink.writeInt(obj.y)
+            sink.writeInt(obj.z)
         }
     }
 }

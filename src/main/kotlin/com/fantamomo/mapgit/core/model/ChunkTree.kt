@@ -1,9 +1,9 @@
 package com.fantamomo.mapgit.core.model
 
-import com.fantamomo.mapgit.core.storage.FriendlyByteBuf
-import com.fantamomo.mapgit.core.storage.StorableObject
-import com.fantamomo.mapgit.core.storage.StorableReadWriter
+import com.fantamomo.mapgit.core.storage.*
 import com.fantamomo.mapgit.core.util.Hash
+import kotlinx.io.Sink
+import kotlinx.io.Source
 
 data class ChunkTree(
     val chunks: List<Pair<ChunkPos, Hash>>
@@ -13,25 +13,25 @@ data class ChunkTree(
     companion object : StorableReadWriter<ChunkTree> {
         override val type: String = "chunk_tree"
 
-        override fun read(buf: FriendlyByteBuf): ChunkTree {
-            val chunkCount = buf.readInt()
+        override fun read(source: Source): ChunkTree {
+            val chunkCount = source.readInt()
             val chunks = List(chunkCount) {
-                val chunkPos = buf.readStorableObject(ChunkPos)
-                val chunkHash = buf.readHash()
+                val chunkPos = source.readStorableObject(ChunkPos)
+                val chunkHash = source.readHash()
                 chunkPos to chunkHash
             }
             return ChunkTree(chunks)
         }
 
         override fun write(
-            buf: FriendlyByteBuf,
+            sink: Sink,
             obj: ChunkTree
         ) {
             val chunks = obj.chunks
-            buf.writeInt(chunks.size)
+            sink.writeInt(chunks.size)
             for (chunk in chunks) {
-                buf.writeStorableObject(chunk.first)
-                buf.writeHash(chunk.second)
+                sink.writeStorableObject(chunk.first)
+                sink.writeHash(chunk.second)
             }
         }
     }

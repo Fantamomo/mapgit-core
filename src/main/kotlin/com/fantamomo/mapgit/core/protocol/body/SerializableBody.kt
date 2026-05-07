@@ -1,6 +1,7 @@
 package com.fantamomo.mapgit.core.protocol.body
 
-import com.fantamomo.mapgit.core.storage.FriendlyByteBuf
+import kotlinx.io.Sink
+import kotlinx.io.Source
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -21,14 +22,14 @@ open class SerializableBody<B : SerializableBody<B>> : Body {
         override val contentType: String = "application/json"
 
         @Deprecated("Serialization is not natively supported for SerializableBody")
-        override fun serialize(buf: FriendlyByteBuf, body: SerializableBody<*>) {
+        override fun serialize(sink: Sink, body: SerializableBody<*>) {
             throw UnsupportedOperationException(
                 "Serialization is not natively supported for SerializableBody"
             )
         }
 
         @Deprecated("Deserialization is not natively supported for SerializableBody")
-        override fun deserialize(buf: FriendlyByteBuf): SerializableBody<*> {
+        override fun deserialize(source: Source): SerializableBody<*> {
             throw UnsupportedOperationException(
                 "Deserialization is not natively supported for SerializableBody"
             )

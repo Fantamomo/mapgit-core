@@ -6,8 +6,11 @@ import com.fantamomo.mapgit.core.protocol.body.MapGitObjectBody
 import com.fantamomo.mapgit.core.protocol.respond.Respond
 import com.fantamomo.mapgit.core.protocol.respond.RespondDefinition
 import com.fantamomo.mapgit.core.registry.StorableObjectRegistry
-import com.fantamomo.mapgit.core.storage.FriendlyByteBuf
 import com.fantamomo.mapgit.core.storage.StorableObject
+import com.fantamomo.mapgit.core.storage.readSafeString
+import com.fantamomo.mapgit.core.storage.writeSafeString
+import kotlinx.io.Sink
+import kotlinx.io.Source
 
 class GetObjectPatchRespond<T : StorableObject<T>>(
     override val body: MapGitObjectBody<T>,
@@ -26,24 +29,24 @@ class GetObjectPatchRespond<T : StorableObject<T>>(
             override val contentType: String = "application/x-mapgit-object-patch"
 
             override fun serialize(
-                buf: FriendlyByteBuf,
+                sink: Sink,
                 body: MapGitObjectPatchBody
             ) {
-                buf.writeInt(body.objects.size)
+                sink.writeInt(body.objects.size)
                 body.objects.forEach { obj ->
-                    buf.writeString(obj.readWriter.type)
+                    sink.writeSafeString(obj.readWriter.type)
                     @Suppress("UNCHECKED_CAST", "UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS_WARNING")
-                    (obj as StorableObject<Any>).readWriter.write(buf, obj)
+                    (obj as StorableObject<Any>).readWriter.write(sink, obj)
                 }
             }
 
-            override fun deserialize(buf: FriendlyByteBuf): MapGitObjectPatchBody {
-                val size = buf.readInt()
+            override fun deserialize(source: Source): MapGitObjectPatchBody {
+                val size = source.readInt()
                 val objects = List(size) {
-                    val type = buf.readString()
+                    val type = source.readSafeString()
                     val readWriter =
                         StorableObjectRegistry.objects.values.find { it.type == type } ?: error("Unknown type $type")
-                    readWriter.read(buf)
+                    readWriter.read(source)
                 }
                 return MapGitObjectPatchBody(objects)
             }

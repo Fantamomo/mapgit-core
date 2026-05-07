@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "2.3.21"
     kotlin("plugin.serialization") version "2.3.21"
-
+    id("maven-publish")
 }
 
 group = "com.fantamomo.mapgit"
@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-    implementation("io.netty:netty-buffer:5.0.0.Alpha2")
+    implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
 
     testImplementation(kotlin("test"))
@@ -25,4 +25,20 @@ kotlin {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["kotlin"])
+
+            groupId = project.group.toString()
+            artifactId = project.name
+            version = project.version.toString()
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
 }

@@ -1,8 +1,8 @@
 package com.fantamomo.mapgit.core.model
 
-import com.fantamomo.mapgit.core.storage.FriendlyByteBuf
-import com.fantamomo.mapgit.core.storage.StorableObject
-import com.fantamomo.mapgit.core.storage.StorableReadWriter
+import com.fantamomo.mapgit.core.storage.*
+import kotlinx.io.Sink
+import kotlinx.io.Source
 import java.util.*
 
 data class Author(
@@ -14,18 +14,18 @@ data class Author(
     companion object : StorableReadWriter<Author> {
         override val type: String = "author"
 
-        override fun read(buf: FriendlyByteBuf): Author {
-            val name = buf.readString()
-            val uuid = buf.readUUID()
+        override fun read(source: Source): Author {
+            val name = source.readSafeString()
+            val uuid = source.readUUID()
             return Author(name, uuid)
         }
 
         override fun write(
-            buf: FriendlyByteBuf,
+            sink: Sink,
             obj: Author
         ) {
-            buf.writeString(obj.name)
-            buf.writeUUID(obj.uuid)
+            sink.writeSafeString(obj.name)
+            sink.writeUUID(obj.uuid)
         }
     }
 }

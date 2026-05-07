@@ -1,6 +1,7 @@
 package com.fantamomo.mapgit.core.protocol.body
 
-import com.fantamomo.mapgit.core.storage.FriendlyByteBuf
+import kotlinx.io.Sink
+import kotlinx.io.Source
 
 /**
  * A singleton object representing an empty body for a request or response.
@@ -16,8 +17,8 @@ data object EmptyBody : Body, BodyDefinition<EmptyBody> {
     override val contentType: String = ""
 
     @Deprecated("EmptyBody should be handled specially, this method should not be used directly.")
-    override fun serialize(buf: FriendlyByteBuf, body: EmptyBody) {}
+    override fun serialize(sink: Sink, body: EmptyBody) {}
 
     @Deprecated("EmptyBody should be handled specially, this method should not be used directly.")
-    override fun deserialize(buf: FriendlyByteBuf): EmptyBody = this
+    override fun deserialize(source: Source): EmptyBody = this
 }

@@ -1,8 +1,12 @@
 package com.fantamomo.mapgit.core.model
 
-import com.fantamomo.mapgit.core.storage.FriendlyByteBuf
 import com.fantamomo.mapgit.core.storage.StorableObject
 import com.fantamomo.mapgit.core.storage.StorableReadWriter
+import com.fantamomo.mapgit.core.storage.readSafeString
+import com.fantamomo.mapgit.core.storage.writeSafeString
+import kotlinx.io.Sink
+import kotlinx.io.Source
+import kotlinx.io.readByteArray
 
 data class Block(
     val type: String,
@@ -13,21 +17,19 @@ data class Block(
     companion object : StorableReadWriter<Block> {
         override val type: String = "block"
 
-        override fun read(buf: FriendlyByteBuf): Block {
-            val type = buf.readString()
-            val dataLength = buf.readInt()
-            val data = ByteArray(dataLength)
-            buf.readBytes(data)
-            return Block(type, data)
+        override fun read(source: Source): Block {
+            val type = source.readSafeString()
+            val dataLength = source.readInt()
+            return Block(type, source.readByteArray(dataLength))
         }
 
         override fun write(
-            buf: FriendlyByteBuf,
+            sink: Sink,
             obj: Block
         ) {
-            buf.writeString(obj.type)
-            buf.writeInt(obj.data.size)
-            buf.writeBytes(obj.data)
+            sink.writeSafeString(obj.type)
+            sink.writeInt(obj.data.size)
+            sink.write(obj.data)
         }
     }
 
