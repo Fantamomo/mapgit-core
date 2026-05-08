@@ -6,6 +6,7 @@ import com.fantamomo.mapgit.core.storage.readSafeString
 import com.fantamomo.mapgit.core.storage.writeSafeString
 import kotlinx.io.Sink
 import kotlinx.io.Source
+import kotlin.reflect.KClass
 
 class MapGitObjectBody<T : StorableObject<T>>(val obj: T) : Body {
     override val bodyDefinition = getDefinition<T>()
@@ -14,6 +15,7 @@ class MapGitObjectBody<T : StorableObject<T>>(val obj: T) : Body {
     private constructor(obj: StorableObject<*>, @Suppress("unused") ignore: Unit = Unit) : this(obj as T)
 
     companion object : BodyDefinition<MapGitObjectBody<*>> {
+        override val bodyClass: KClass<MapGitObjectBody<*>> = MapGitObjectBody::class
         override val contentType: String = "application/x-mapgit-object"
 
         @Suppress("UNCHECKED_CAST")

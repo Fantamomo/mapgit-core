@@ -25,4 +25,20 @@ class BlockPosTest {
             BlockPos(16, 0, 0)
         }
     }
+
+    @Test
+    fun `blockpos accepts boundary values`() {
+        val pos = BlockPos(0, 0, 0)
+        val pos2 = BlockPos(15, 15, 15)
+
+        assertEquals(pos, roundTrip(pos, BlockPos::write, BlockPos::read))
+        assertEquals(pos2, roundTrip(pos2, BlockPos::write, BlockPos::read))
+    }
+
+    @Test
+    fun `blockpos rejects negative values`() {
+        assertFailsWith<IllegalArgumentException> {
+            BlockPos(-1, 0, 0)
+        }
+    }
 }

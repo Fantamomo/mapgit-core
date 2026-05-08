@@ -4,6 +4,7 @@ import kotlinx.io.Sink
 import kotlinx.io.Source
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlin.reflect.KClass
 
 @Serializable
 open class SerializableBody<B : SerializableBody<B>> : Body {
@@ -18,6 +19,8 @@ open class SerializableBody<B : SerializableBody<B>> : Body {
             @Suppress("UNCHECKED_CAST")
             return this as BodyDefinition<B>
         }
+
+        override val bodyClass: KClass<SerializableBody<*>> = SerializableBody::class
 
         override val contentType: String = "application/json"
 

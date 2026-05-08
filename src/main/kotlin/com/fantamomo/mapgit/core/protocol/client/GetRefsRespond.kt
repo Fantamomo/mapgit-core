@@ -4,6 +4,7 @@ import com.fantamomo.mapgit.core.protocol.body.BodyDefinition
 import com.fantamomo.mapgit.core.protocol.body.SerializableBody
 import com.fantamomo.mapgit.core.protocol.respond.Respond
 import com.fantamomo.mapgit.core.protocol.respond.RespondDefinition
+import kotlinx.serialization.Serializable
 
 class GetRefsRespond(
     override val body: GetRefsRespondBody
@@ -12,10 +13,12 @@ class GetRefsRespond(
      * @param refs Map of ref name to ref hash.
      * The hash is a hex string and can be converted to a [com.fantamomo.mapgit.core.util.Hash] using [com.fantamomo.mapgit.core.util.Hash.fromHexString]
      */
+    @Serializable
     class GetRefsRespondBody(val refs: Map<String, String>) : SerializableBody<GetRefsRespondBody>()
 
     companion object : RespondDefinition<GetRefsRespond, GetRefsRespondBody> {
         override val bodyDefinition: BodyDefinition<GetRefsRespondBody> = SerializableBody.definition()
+        override val bodyClass = GetRefsRespondBody::class
 
         override fun build(body: GetRefsRespondBody) = GetRefsRespond(body)
     }

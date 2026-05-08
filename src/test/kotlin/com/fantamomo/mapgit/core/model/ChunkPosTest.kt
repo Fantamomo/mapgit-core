@@ -17,4 +17,12 @@ class ChunkPosTest {
 
         assertEquals(pos, result)
     }
+
+    @Test
+    fun `chunkpos equality works`() {
+        val a = ChunkPos(1, 2, 3)
+        val b = ChunkPos(1, 2, 3)
+
+        assertEquals(a, b)
+    }
 }

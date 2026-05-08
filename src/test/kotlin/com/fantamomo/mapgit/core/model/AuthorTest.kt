@@ -28,4 +28,25 @@ class AuthorTest {
 
         assertEquals(a1.hash(), a2.hash())
     }
+
+    @Test
+    fun `author equality ignores instance identity`() {
+        val uuid = UUID.randomUUID()
+
+        val a1 = Author("Steve", uuid)
+        val a2 = Author("Steve", uuid)
+
+        assertEquals(a1, a2)
+    }
+
+    @Test
+    fun `author roundtrip preserves uuid and name`() {
+        val uuid = UUID.randomUUID()
+        val author = Author("UnitTest", uuid)
+
+        val result = roundTrip(author, Author::write, Author::read)
+
+        assertEquals("UnitTest", result.name)
+        assertEquals(uuid, result.uuid)
+    }
 }

@@ -19,7 +19,7 @@ data class Chunk(
 
     companion object : StorableReadWriter<Chunk> {
         const val BLOCKS_PER_CHUNK = 16 * 16 * 16 // 4096
-        const val OPTIMISATION_THRESHOLD = 2048 // Subject to change. Changing this variable will not affect readability.
+        const val OPTIMISATION_THRESHOLD = 2048 // Subject to change. Changing this variable will not affect readability, but may impact hash calculation
         override val type: String = "chunk"
 
         override fun read(source: Source): Chunk {

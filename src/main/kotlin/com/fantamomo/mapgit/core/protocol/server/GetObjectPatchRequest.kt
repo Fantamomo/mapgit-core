@@ -19,6 +19,8 @@ class GetObjectPatchRequest(
 
     companion object : RequestDefinition<GetObjectPatchRequest, GetObjectPatchRequestBody> {
         override val bodyDefinition: BodyDefinition<GetObjectPatchRequestBody> = SerializableBody.definition()
+
+        override val bodyClass = GetObjectPatchRequestBody::class
         override val httpMethode: HttpMethode = HttpMethode.GET
         override val serverPath: String = "/repo/{repo}/objects/patch"
 

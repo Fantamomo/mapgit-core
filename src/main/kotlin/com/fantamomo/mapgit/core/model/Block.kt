@@ -10,11 +10,13 @@ import kotlinx.io.readByteArray
 
 data class Block(
     val type: String,
-    val data: ByteArray
+    val data: ByteArray = EMPTY_BYTE_ARRAY
 ) : StorableObject<Block> {
     override val readWriter = Companion
 
     companion object : StorableReadWriter<Block> {
+        val EMPTY_BYTE_ARRAY = byteArrayOf()
+
         override val type: String = "block"
 
         override fun read(source: Source): Block {

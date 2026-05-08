@@ -2,7 +2,6 @@ package com.fantamomo.mapgit.core.protocol.client
 
 import com.fantamomo.mapgit.core.protocol.body.Body
 import com.fantamomo.mapgit.core.protocol.body.BodyDefinition
-import com.fantamomo.mapgit.core.protocol.body.MapGitObjectBody
 import com.fantamomo.mapgit.core.protocol.respond.Respond
 import com.fantamomo.mapgit.core.protocol.respond.RespondDefinition
 import com.fantamomo.mapgit.core.registry.StorableObjectRegistry
@@ -11,21 +10,17 @@ import com.fantamomo.mapgit.core.storage.readSafeString
 import com.fantamomo.mapgit.core.storage.writeSafeString
 import kotlinx.io.Sink
 import kotlinx.io.Source
+import kotlin.reflect.KClass
 
-class GetObjectPatchRespond<T : StorableObject<T>>(
-    override val body: MapGitObjectBody<T>,
-) : Respond<MapGitObjectBody<T>> {
-
-    @Suppress("UNCHECKED_CAST")
-    private constructor(
-        body: MapGitObjectBody<*>,
-        @Suppress("unused") ignore: Unit = Unit
-    ) : this(body as MapGitObjectBody<T>)
+class GetObjectPatchRespond(
+    override val body: MapGitObjectPatchBody,
+) : Respond<GetObjectPatchRespond.MapGitObjectPatchBody> {
 
     class MapGitObjectPatchBody(val objects: List<StorableObject<*>>) : Body {
         override val bodyDefinition = Companion
 
         companion object : BodyDefinition<MapGitObjectPatchBody> {
+            override val bodyClass: KClass<MapGitObjectPatchBody> = MapGitObjectPatchBody::class
             override val contentType: String = "application/x-mapgit-object-patch"
 
             override fun serialize(
@@ -53,12 +48,9 @@ class GetObjectPatchRespond<T : StorableObject<T>>(
         }
     }
 
-    companion object : RespondDefinition<Respond<MapGitObjectBody<*>>, MapGitObjectBody<*>> {
-        override val bodyDefinition: BodyDefinition<MapGitObjectBody<*>> = MapGitObjectBody
+    companion object : RespondDefinition<GetObjectPatchRespond, MapGitObjectPatchBody> {
+        override val bodyDefinition = MapGitObjectPatchBody
 
-        override fun build(body: MapGitObjectBody<*>): Respond<MapGitObjectBody<*>> {
-            @Suppress("UNCHECKED_CAST")
-            return GetObjectPatchRespond(body, Unit) as Respond<MapGitObjectBody<*>>
-        }
+        override fun build(body: MapGitObjectPatchBody) = GetObjectPatchRespond(body)
     }
 }

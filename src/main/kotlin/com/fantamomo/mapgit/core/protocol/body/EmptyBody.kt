@@ -2,6 +2,7 @@ package com.fantamomo.mapgit.core.protocol.body
 
 import kotlinx.io.Sink
 import kotlinx.io.Source
+import kotlin.reflect.KClass
 
 /**
  * A singleton object representing an empty body for a request or response.
@@ -13,6 +14,8 @@ import kotlinx.io.Source
  */
 data object EmptyBody : Body, BodyDefinition<EmptyBody> {
     override val bodyDefinition = this
+    override val bodyClass: KClass<EmptyBody> = EmptyBody::class
+
     @Deprecated("EmptyBody should be handled specially, this properties should not be used directly.")
     override val contentType: String = ""
 
