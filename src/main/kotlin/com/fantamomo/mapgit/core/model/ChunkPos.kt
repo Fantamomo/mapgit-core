@@ -9,8 +9,16 @@ data class ChunkPos(
     val x: Int,
     val y: Int,
     val z: Int
-) : StorableObject<ChunkPos> {
+) : StorableObject<ChunkPos>, Comparable<ChunkPos> {
     override val readWriter = Companion
+
+    override fun compareTo(other: ChunkPos): Int {
+        val xComparison = x.compareTo(other.x)
+        if (xComparison != 0) return xComparison
+        val yComparison = y.compareTo(other.y)
+        if (yComparison != 0) return yComparison
+        return z.compareTo(other.z)
+    }
 
     companion object : StorableReadWriter<ChunkPos> {
         val ZERO = ChunkPos(0, 0, 0)

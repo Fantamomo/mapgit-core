@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 
 object StorableObjectRegistry {
     val objects: Map<KClass<out StorableObject<*>>, StorableReadWriter<out StorableObject<*>>> = mapOf(
-        Author::class to Author,
+        User::class to User,
         Block::class to Block,
         BlockPos::class to BlockPos,
         Chunk::class to Chunk,

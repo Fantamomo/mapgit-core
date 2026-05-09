@@ -5,24 +5,24 @@ import kotlinx.io.Sink
 import kotlinx.io.Source
 import java.util.*
 
-data class Author(
+data class User(
     val name: String,
     val uuid: UUID
-) : StorableObject<Author> {
+) : StorableObject<User> {
     override val readWriter = Companion
 
-    companion object : StorableReadWriter<Author> {
+    companion object : StorableReadWriter<User> {
         override val type: String = "author"
 
-        override fun read(source: Source): Author {
+        override fun read(source: Source): User {
             val name = source.readSafeString()
             val uuid = source.readUUID()
-            return Author(name, uuid)
+            return User(name, uuid)
         }
 
         override fun write(
             sink: Sink,
-            obj: Author
+            obj: User
         ) {
             sink.writeSafeString(obj.name)
             sink.writeUUID(obj.uuid)

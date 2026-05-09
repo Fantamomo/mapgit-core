@@ -12,7 +12,7 @@ class CommitTest {
         val commit = Commit(
             timestamp = 123456789L,
             parents = listOf(Hash.hash("p1"), Hash.hash("p2")),
-            author = Author("me", UUID.randomUUID()),
+            author = User("me", UUID.randomUUID()),
             message = "hello world",
             chunkTree = Hash.hash("tree")
         )

@@ -49,6 +49,10 @@ fun Sink.writeEnum(enum: Enum<*>) {
     writeVarInt(enum.ordinal)
 }
 
+fun Sink.writeEnumName(enum: Enum<*>) {
+    writeSafeString(enum.name)
+}
+
 fun <E : Enum<E>> Source.readEnum(entries: EnumEntries<E>): E {
     val ordinal = readVarInt()
 
@@ -57,6 +61,13 @@ fun <E : Enum<E>> Source.readEnum(entries: EnumEntries<E>): E {
 }
 
 inline fun <reified E : Enum<E>> Source.readEnum(): E = readEnum(enumEntries<E>())
+
+fun <E : Enum<E>> Source.readEnumName(entries: EnumEntries<E>): E {
+    val name = readSafeString()
+    return entries.firstOrNull { it.name == name } ?: throw IllegalArgumentException("Invalid enum name: $name")
+}
+
+inline fun <reified E : Enum<E>> Source.readEnumName(): E = readEnumName(enumEntries<E>())
 
 fun Sink.writeVarInt(value: Int) {
     var v = value

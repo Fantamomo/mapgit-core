@@ -9,7 +9,7 @@ data class BlockPos(
     val x: Int,
     val y: Int,
     val z: Int
-) : StorableObject<BlockPos> {
+) : StorableObject<BlockPos>, Comparable<BlockPos> {
 
     override val readWriter = Companion
 
@@ -17,6 +17,14 @@ data class BlockPos(
         require(x in 0..15) { "x must be between 0 and 15, was $x" }
         require(y in 0..15) { "y must be between 0 and 15, was $y" }
         require(z in 0..15) { "z must be between 0 and 15, was $z" }
+    }
+
+    override fun compareTo(other: BlockPos): Int {
+        val xComparison = x.compareTo(other.x)
+        if (xComparison != 0) return xComparison
+        val yComparison = y.compareTo(other.y)
+        if (yComparison != 0) return yComparison
+        return z.compareTo(other.z)
     }
 
     companion object : StorableReadWriter<BlockPos> {
