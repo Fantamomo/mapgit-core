@@ -13,6 +13,18 @@ sealed class MetaData<T> private constructor(val value: T, private val type: Byt
 
     override val readWriter: StorableReadWriter<MetaData<T>> = getReadWriter()
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as MetaData<*>
+        if (type != other.type) return false // should not happen, but just in case
+        return value == other.value
+    }
+
+    override fun hashCode() = type.hashCode() * 31 + value.hashCode()
+
+    override fun toString() = javaClass.simpleName + "(" + value + ")"
+
     private class BooleanMetaData(value: Boolean) : MetaData<Boolean>(value, 1) {
         override fun writeTo(sink: Sink) = sink.writeByte(if (value) 1 else 0)
     }
@@ -31,10 +43,10 @@ sealed class MetaData<T> private constructor(val value: T, private val type: Byt
         @Suppress("UNCHECKED_CAST")
         override fun read(source: Source): MetaData<T> {
             val type = source.readByte()
-            return when (type.toInt()) {
-                1 -> BooleanMetaData(source.readByte() != 0.toByte())
-                2 -> StringMetaData(source.readSafeString())
-                3 -> IntMetaData(source.readInt())
+            return when (type) {
+                1.toByte() -> BooleanMetaData(source.readByte() != 0.toByte())
+                2.toByte() -> StringMetaData(source.readSafeString())
+                3.toByte() -> IntMetaData(source.readInt())
                 else -> throw IllegalStateException("Unsupported meta data type: $type")
             } as MetaData<T>
         }

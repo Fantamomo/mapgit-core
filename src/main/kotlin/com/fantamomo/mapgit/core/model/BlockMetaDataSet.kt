@@ -8,7 +8,7 @@ import kotlinx.io.Sink
 import kotlinx.io.Source
 import java.util.*
 
-class BlockMetaDataSet(
+data class BlockMetaDataSet(
     val data: SortedMap<Key, MetaData<*>>
 ) : StorableObject<BlockMetaDataSet> {
     override val readWriter = Companion

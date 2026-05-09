@@ -8,7 +8,7 @@ import kotlinx.io.Sink
 import kotlinx.io.Source
 import java.util.*
 
-class GlobalMetaDataSet(
+data class GlobalMetaDataSet(
     val data: SortedMap<Key, MetaData<*>> = TreeMap()
 ) : StorableObject<GlobalMetaDataSet> {
     override val readWriter = Companion
