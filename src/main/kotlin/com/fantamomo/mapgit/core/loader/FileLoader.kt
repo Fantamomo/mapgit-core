@@ -1,9 +1,6 @@
 package com.fantamomo.mapgit.core.loader
 
-import com.fantamomo.mapgit.core.model.Block
-import com.fantamomo.mapgit.core.model.Chunk
-import com.fantamomo.mapgit.core.model.ChunkTree
-import com.fantamomo.mapgit.core.model.Commit
+import com.fantamomo.mapgit.core.model.*
 import com.fantamomo.mapgit.core.storage.StorableObject
 import com.fantamomo.mapgit.core.storage.StorableReadWriter
 import com.fantamomo.mapgit.core.storage.readSafeString
@@ -17,6 +14,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.io.path.notExists
+import kotlinx.io.files.Path as KPath
 
 class FileLoader(val dir: Path, val typePrefixed: Boolean = false) : Loader {
 
@@ -26,11 +24,15 @@ class FileLoader(val dir: Path, val typePrefixed: Boolean = false) : Loader {
 
     override suspend fun loadBlock(hash: Hash): LoaderResult<Block> = load(hash, Block)
 
+    override suspend fun loadBlockMetaDataSet(hash: Hash): LoaderResult<BlockMetaDataSet> = load(hash, BlockMetaDataSet)
+
     override suspend fun loadChunk(hash: Hash): LoaderResult<Chunk> = load(hash, Chunk)
 
     override suspend fun loadChunkTree(hash: Hash): LoaderResult<ChunkTree> = load(hash, ChunkTree)
 
     override suspend fun loadCommit(hash: Hash): LoaderResult<Commit> = load(hash, Commit)
+
+    override suspend fun loadGlobalMetaDataSet(hash: Hash): LoaderResult<GlobalMetaDataSet> = load(hash, GlobalMetaDataSet)
 
     private suspend fun <T : StorableObject<T>> load(
         hash: Hash,
@@ -42,7 +44,7 @@ class FileLoader(val dir: Path, val typePrefixed: Boolean = false) : Loader {
         if (file.notExists()) return@withContext LoaderResult.notFound()
 
         return@withContext try {
-            val path = kotlinx.io.files.Path(file.absolutePathString())
+            val path = KPath(file.absolutePathString())
             val source = SystemFileSystem.source(path).buffered()
             if (source.exhausted()) return@withContext LoaderResult.empty()
             if (typePrefixed) {
