@@ -5,6 +5,9 @@ import com.fantamomo.mapgit.core.protocol.request.Request
 import com.fantamomo.mapgit.core.protocol.request.RequestDefinition
 import com.fantamomo.mapgit.core.protocol.util.HttpMethode
 
+/**
+ * Server respond: [com.fantamomo.mapgit.core.protocol.client.GetObjectRespond]
+ */
 class GetRefsRequest(val repo: String) : Request<GetRefsRequest, EmptyBody> {
     override val body: EmptyBody = EmptyBody
     override val definition = Companion

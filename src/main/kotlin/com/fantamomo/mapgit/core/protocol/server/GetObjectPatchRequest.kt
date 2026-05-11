@@ -7,6 +7,9 @@ import com.fantamomo.mapgit.core.protocol.request.RequestDefinition
 import com.fantamomo.mapgit.core.protocol.util.HttpMethode
 import kotlinx.serialization.Serializable
 
+/**
+ * Server respond: [com.fantamomo.mapgit.core.protocol.client.GetObjectPatchRespond]
+ */
 class GetObjectPatchRequest(
     val repo: String,
     override val body: GetObjectPatchRequestBody

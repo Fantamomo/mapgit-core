@@ -6,6 +6,9 @@ import com.fantamomo.mapgit.core.protocol.respond.Respond
 import com.fantamomo.mapgit.core.protocol.respond.RespondDefinition
 import kotlinx.serialization.Serializable
 
+/**
+ * Server respond for [com.fantamomo.mapgit.core.protocol.server.GetRefsRequest].
+ */
 class GetRefsRespond(
     override val body: GetRefsRespondBody
 ) : Respond<GetRefsRespond.GetRefsRespondBody> {

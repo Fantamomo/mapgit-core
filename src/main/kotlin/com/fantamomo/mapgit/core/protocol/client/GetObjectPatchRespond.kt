@@ -12,6 +12,9 @@ import kotlinx.io.Sink
 import kotlinx.io.Source
 import kotlin.reflect.KClass
 
+/**
+ * Server respond for [com.fantamomo.mapgit.core.protocol.server.GetObjectPatchRequest].
+ */
 class GetObjectPatchRespond(
     override val body: MapGitObjectPatchBody,
 ) : Respond<GetObjectPatchRespond.MapGitObjectPatchBody> {

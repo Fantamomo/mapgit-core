@@ -6,6 +6,9 @@ import com.fantamomo.mapgit.core.protocol.request.RequestDefinition
 import com.fantamomo.mapgit.core.protocol.util.HttpMethode
 import com.fantamomo.mapgit.core.util.Hash
 
+/**
+ * Server respond: [com.fantamomo.mapgit.core.protocol.client.GetObjectRespond]
+ */
 class GetObjectRequest(
     val repo: String,
     val objectHash: Hash

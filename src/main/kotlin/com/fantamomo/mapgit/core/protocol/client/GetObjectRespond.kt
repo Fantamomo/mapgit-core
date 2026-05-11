@@ -6,6 +6,9 @@ import com.fantamomo.mapgit.core.protocol.respond.Respond
 import com.fantamomo.mapgit.core.protocol.respond.RespondDefinition
 import com.fantamomo.mapgit.core.storage.StorableObject
 
+/**
+ * Server respond for [com.fantamomo.mapgit.core.protocol.server.GetObjectRequest]
+ */
 class GetObjectRespond<T : StorableObject<T>>(
     override val body: MapGitObjectBody<T>,
 ) : Respond<MapGitObjectBody<T>> {
