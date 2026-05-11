@@ -15,7 +15,8 @@ class GetObjectPatchRequest(
     override val definition = Companion
 
     @Serializable
-    class GetObjectPatchRequestBody(val objectHashes: List<String>) : SerializableBody<GetObjectPatchRequestBody>(serializableBodyPath = "objectHashes")
+    @SerializableBody.SerializableBodyPath("objectHashes")
+    class GetObjectPatchRequestBody(val objectHashes: List<String>) : SerializableBody<GetObjectPatchRequestBody>()
 
     companion object : RequestDefinition<GetObjectPatchRequest, GetObjectPatchRequestBody> {
         override val bodyDefinition: BodyDefinition<GetObjectPatchRequestBody> = SerializableBody.definition()
