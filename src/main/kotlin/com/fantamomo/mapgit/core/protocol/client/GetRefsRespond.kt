@@ -14,7 +14,7 @@ class GetRefsRespond(
      * The hash is a hex string and can be converted to a [com.fantamomo.mapgit.core.util.Hash] using [com.fantamomo.mapgit.core.util.Hash.fromHexString]
      */
     @Serializable
-    class GetRefsRespondBody(val refs: Map<String, String>) : SerializableBody<GetRefsRespondBody>()
+    class GetRefsRespondBody(val refs: Map<String, String>) : SerializableBody<GetRefsRespondBody>(serializableBodyPath = "refs")
 
     companion object : RespondDefinition<GetRefsRespond, GetRefsRespondBody> {
         override val bodyDefinition: BodyDefinition<GetRefsRespondBody> = SerializableBody.definition()
