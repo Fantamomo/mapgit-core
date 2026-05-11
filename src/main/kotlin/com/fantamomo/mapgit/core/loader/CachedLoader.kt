@@ -10,11 +10,15 @@ class CachedLoader(private val delegate: Loader) : Loader {
 
     override suspend fun loadBlock(hash: Hash) = cacheGet(hash, delegate::loadBlock)
 
+    override suspend fun loadBlockMetaDataSet(hash: Hash) = cacheGet(hash, delegate::loadBlockMetaDataSet)
+
     override suspend fun loadChunk(hash: Hash) = cacheGet(hash, delegate::loadChunk)
 
     override suspend fun loadChunkTree(hash: Hash) = cacheGet(hash, delegate::loadChunkTree)
 
     override suspend fun loadCommit(hash: Hash) = cacheGet(hash, delegate::loadCommit)
+
+    override suspend fun loadGlobalMetaDataSet(hash: Hash) = cacheGet(hash, delegate::loadGlobalMetaDataSet)
 
     @OptIn(ExperimentalContracts::class)
     @Suppress("UNCHECKED_CAST")
