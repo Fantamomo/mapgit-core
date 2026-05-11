@@ -6,17 +6,19 @@ import com.fantamomo.mapgit.core.model.ChunkTree
 import com.fantamomo.mapgit.core.model.Commit
 import com.fantamomo.mapgit.core.storage.StorableObject
 import com.fantamomo.mapgit.core.storage.StorableReadWriter
+import com.fantamomo.mapgit.core.storage.readSafeString
 import com.fantamomo.mapgit.core.util.Hash
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.io.Buffer
+import kotlinx.io.buffered
+import kotlinx.io.files.SystemFileSystem
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.io.path.notExists
-import kotlin.io.path.readBytes
 
-class FileLoader(val dir: Path) : Loader {
+class FileLoader(val dir: Path, val typePrefixed: Boolean = false) : Loader {
 
     init {
         require(dir.exists() && dir.isDirectory()) { "Path must exist and must be a directory" }
@@ -40,10 +42,15 @@ class FileLoader(val dir: Path) : Loader {
         if (file.notExists()) return@withContext LoaderResult.notFound()
 
         return@withContext try {
-            val bytes = file.readBytes()
-            if (bytes.isEmpty()) return@withContext LoaderResult.empty()
-            val buf = Buffer()
-            LoaderResult.success(readWriter.read(buf))
+            val path = kotlinx.io.files.Path(file.absolutePathString())
+            val source = SystemFileSystem.source(path).buffered()
+            if (source.exhausted()) return@withContext LoaderResult.empty()
+            if (typePrefixed) {
+                if (source.readSafeString() != readWriter.type) {
+                    return@withContext LoaderResult.typeMismatch()
+                }
+            }
+            LoaderResult.success(readWriter.read(source))
         } catch (e: Exception) {
             LoaderResult.failure(e)
         }
