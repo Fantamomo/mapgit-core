@@ -1,6 +1,7 @@
 package com.fantamomo.mapgit.core.loader
 
 import com.fantamomo.mapgit.core.model.*
+import com.fantamomo.mapgit.core.registry.StorableObjectRegistry
 import com.fantamomo.mapgit.core.storage.StorableObject
 import com.fantamomo.mapgit.core.storage.StorableReadWriter
 import com.fantamomo.mapgit.core.storage.readSafeString
@@ -33,6 +34,25 @@ class FileLoader(val dir: Path, val typePrefixed: Boolean = false) : Loader {
     override suspend fun loadCommit(hash: Hash): LoaderResult<Commit> = load(hash, Commit)
 
     override suspend fun loadGlobalMetaDataSet(hash: Hash): LoaderResult<GlobalMetaDataSet> = load(hash, GlobalMetaDataSet)
+
+    suspend fun load(hash: Hash): LoaderResult<StorableObject<*>> = withContext(Dispatchers.IO) {
+        if (!typePrefixed) throw IllegalStateException("Type prefix must be enabled to use this method")
+        val hex = hash.toHexString()
+        val directory = dir.resolve(hex.substring(0, 2))
+        val file = directory.resolve("${hex.substring(2)}.mg")
+        if (file.notExists()) return@withContext LoaderResult.notFound()
+        return@withContext try {
+            val path = KPath(file.absolutePathString())
+            val source = SystemFileSystem.source(path).buffered()
+            if (source.exhausted()) return@withContext LoaderResult.empty()
+            val type = source.readSafeString()
+            val storableObject = StorableObjectRegistry.objects.values.find { it.type == type }?.read(source)
+            if (storableObject == null) return@withContext LoaderResult.typeMismatch()
+            LoaderResult.success(storableObject)
+        } catch (e: Exception) {
+            LoaderResult.failure(e)
+        }
+    }
 
     private suspend fun <T : StorableObject<T>> load(
         hash: Hash,

@@ -12,7 +12,7 @@ class MapGitObjectBody<T : StorableObject<T>>(val obj: T) : Body {
     override val bodyDefinition = getDefinition<T>()
 
     @Suppress("UNCHECKED_CAST")
-    private constructor(obj: StorableObject<*>, @Suppress("unused") ignore: Unit = Unit) : this(obj as T)
+    constructor(obj: StorableObject<*>, @Suppress("unused") ignore: Unit = Unit) : this(obj as T)
 
     companion object : BodyDefinition<MapGitObjectBody<*>> {
         override val bodyClass: KClass<MapGitObjectBody<*>> = MapGitObjectBody::class
